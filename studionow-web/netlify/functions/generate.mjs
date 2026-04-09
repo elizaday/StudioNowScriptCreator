@@ -13,11 +13,15 @@ const _fnDir = dirname(fileURLToPath(import.meta.url));
 
 // Load the pre-built full prompt (CLAUDE.md + all 15 reference files)
 let SYSTEM_PROMPT = "";
-const promptPaths = [
-  resolve(_fnDir, "../../full-prompt.md"),       // netlify dev (runs from project root)
-  resolve(_fnDir, "../full-prompt.md"),           // alternate
-  resolve(_fnDir, "full-prompt.md"),              // bundled
-];
+const promptPath = resolve(process.cwd(), "studionow-web", "full-prompt.md");
+
+try {
+  SYSTEM_PROMPT = readFileSync(promptPath, "utf-8");
+  console.log(`Full prompt loaded from ${promptPath}`);
+} catch (err) {
+  console.error("CRITICAL ERROR: Could not load full-prompt.md. Path tried:", promptPath);
+}
+
 for (const p of promptPaths) {
   try {
     SYSTEM_PROMPT = readFileSync(p, "utf-8");
