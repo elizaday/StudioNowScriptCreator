@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudioNow — Feedback Review</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --dark: #191919;
+      --med: #555;
+      --light: #888;
+      --border: #e0e0e0;
+      --bg: #fafafa;
+      --white: #fff;
+      --blue: #0075FF;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    .header {
+      background: var(--dark);
+      padding: 16px 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header .logo img { height: 20px; display: block; }
+    .header .divider { width: 1px; height: 20px; background: rgba(255,255,255,0.2); }
+    .header .subtitle { color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 500; }
+    .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+    h1 { font-size: 22px; margin-bottom: 4px; }
+    .description { font-size: 14px; color: var(--light); margin-bottom: 24px; }
+    .stats {
+      display: flex; gap: 24px; margin-bottom: 24px;
+      padding: 16px 20px; background: var(--white); border: 1px solid var(--border); border-radius: 8px;
+    }
+    .stat-item { text-align: center; }
+    .stat-number { font-size: 28px; font-weight: 700; color: var(--blue); }
+    .stat-label { font-size: 12px; color: var(--light); text-transform: uppercase; letter-spacing: 0.5px; }
+    .feedback-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 12px;
+    }
+    .feedback-meta {
+      display: flex; gap: 12px; align-items: center;
+      font-size: 12px; color: var(--light); margin-bottom: 8px;
+    }
+    .feedback-meta .tag {
+      background: #eef6ff; color: var(--blue);
+      padding: 2px 8px; border-radius: 4px; font-weight: 600;
+    }
+    .feedback-text { font-size: 15px; color: var(--dark); margin-bottom: 8px; }
+    .feedback-brief { font-size: 13px; color: var(--light); font-style: italic; }
+    .empty { text-align: center; padding: 60px; color: var(--light); font-size: 15px; }
+    .back-link { display: inline-block; margin-bottom: 20px; color: var(--blue); text-decoration: none; font-size: 14px; }
+    .back-link:hover { text-decoration: underline; }
+    .actions { margin-bottom: 20px; }
+    .actions button {
+      background: var(--white); border: 1px solid var(--border);
+      padding: 8px 16px; font-size: 13px; border-radius: 6px; cursor: pointer;
+      font-family: inherit;
+    }
+    .actions button:hover { border-color: var(--dark); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a class="logo" href="/">
+      <img src="https://studionow.com/hs-fs/hubfs/studio-now-2024-theme-assets/logos/studio-now-logo-white.png" alt="StudioNow" height="20">
+    </a>
+    <div class="divider"></div>
+    <div class="subtitle">Feedback Review</div>
+  </div>
+
+  <div class="container">
+    <a href="/" class="back-link">← Back to Script Creator</a>
+    <h1>Writer Feedback</h1>
+    <p class="description">Review feedback from the team. Use patterns here to update <code>learning.md</code> and improve the tool.</p>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="actions">
+      <button onclick="exportCSV()">Export as CSV</button>
+    </div>
+
+    <div id="feedbackList"></div>
+  </div>
+
+  <script>
+    let feedbackData = [];
+
+    async function loadFeedback() {
+      try {
+        const res = await fetch('/api/feedback');
+        feedbackData = await res.json();
+      } catch {
+        // Fall back to localStorage
+        feedbackData = JSON.parse(localStorage.getItem('sn_feedback') || '[]');
+      }
+
+      // Sort newest first
+      feedbackData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+      renderStats();
+      renderList();
+    }
+
+    function renderStats() {
+      const total = feedbackData.length;
+      const thisWeek = feedbackData.filter(f => {
+        const d = new Date(f.timestamp);
+        const now = new Date();
+        return (now - d) < 7 * 24 * 60 * 60 * 1000;
+      }).length;
+      const genres = {};
+      feedbackData.forEach(f => { if (f.genre) genres[f.genre] = (genres[f.genre] || 0) + 1; });
+      const topGenre = Object.entries(genres).sort((a, b) => b[1] - a[1])[0];
+
+      document.getElementById('stats').innerHTML = `
+        <div class="stat-item"><div class="stat-number">${total}</div><div class="stat-label">Total</div></div>
+        <div class="stat-item"><div class="stat-number">${thisWeek}</div><div class="stat-label">This Week</div></div>
+        <div class="stat-item"><div class="stat-number">${topGenre ? topGenre[0].split('/')[0].trim() : '—'}</div><div class="stat-label">Most Feedback Genre</div></div>
+      `;
+    }
+
+    function renderList() {
+      const list = document.getElementById('feedbackList');
+      if (feedbackData.length === 0) {
+        list.innerHTML = '<div class="empty">No feedback yet. It will appear here as writers use the tool.</div>';
+        return;
+      }
+
+      list.innerHTML = feedbackData.map(f => {
+        const date = new Date(f.timestamp).toLocaleDateString('en-US', {
+          month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
+        });
+        return `<div class="feedback-card">
+          <div class="feedback-meta">
+            <span>${date}</span>
+            ${f.client ? `<span class="tag">${f.client}</span>` : ''}
+            ${f.genre ? `<span class="tag">${f.genre}</span>` : ''}
+          </div>
+          <div class="feedback-text">${escapeHtml(f.feedback)}</div>
+          ${f.brief ? `<div class="feedback-brief">"${escapeHtml(f.brief)}"</div>` : ''}
+        </div>`;
+      }).join('');
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function exportCSV() {
+      const headers = ['Date', 'Client', 'Genre', 'Feedback', 'Brief'];
+      const rows = feedbackData.map(f => [
+        f.timestamp,
+        `"${(f.client || '').replace(/"/g, '""')}"`,
+        `"${(f.genre || '').replace(/"/g, '""')}"`,
+        `"${(f.feedback || '').replace(/"/g, '""')}"`,
+        `"${(f.brief || '').replace(/"/g, '""')}"`,
+      ]);
+      const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `studionow_feedback_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    loadFeedback();
+  </script>
+</body>
+</html>

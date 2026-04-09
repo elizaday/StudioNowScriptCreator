@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "studionow-web",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8888"],
+      "port": 8888,
+      "cwd": "/Users/eli/Downloads/StudioNow/Script Auto/studionow-web/public"
+    }
+  ]
+}

@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudioNow Script Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --dark: #191919;
+      --med: #555;
+      --light: #888;
+      --border: #e0e0e0;
+      --bg: #fafafa;
+      --white: #fff;
+      --blue: #0075FF;
+      --blue-dark: #0060d4;
+      --green: #16a34a;
+      --green-light: #dcfce7;
+      --amber: #d97706;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    /* Header */
+    .header {
+      background: var(--dark);
+      padding: 16px 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header .logo img {
+      height: 20px;
+      display: block;
+    }
+    .header .divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(255,255,255,0.2);
+    }
+    .header .subtitle {
+      color: rgba(255,255,255,0.5);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+    .header .nav-link {
+      margin-left: auto;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+    .header .nav-link:hover { color: rgba(255,255,255,0.85); }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    /* Panels */
+    .panel {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+    .panel h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .panel .desc {
+      font-size: 14px;
+      color: var(--light);
+      margin-bottom: 24px;
+    }
+
+    /* Form elements */
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--med);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 15px;
+      font-family: inherit;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--dark);
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+    }
+
+    .script-input {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      min-height: 240px;
+      resize: vertical;
+    }
+
+    .feedback-input {
+      min-height: 72px;
+      resize: vertical;
+    }
+
+    .field { margin-bottom: 20px; }
+
+    /* Mode selector */
+    .mode-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--med);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+    .modes {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 700px) {
+      .modes { grid-template-columns: repeat(2, 1fr); }
+    }
+    .mode-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--med);
+      cursor: pointer;
+      font-family: inherit;
+      padding: 14px;
+      text-align: left;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+    }
+    .mode-btn:hover {
+      border-color: var(--blue);
+      color: var(--dark);
+    }
+    .mode-btn.active {
+      background: #eef6ff;
+      border-color: var(--blue);
+      color: var(--dark);
+    }
+    .mode-btn .mode-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    .mode-btn .mode-desc {
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--light);
+    }
+    .mode-btn.active .mode-desc { color: var(--med); }
+
+    /* Toggle link */
+    .toggle-link {
+      background: none;
+      border: none;
+      color: var(--blue);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      margin-bottom: 12px;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .stats-row {
+      display: flex;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--light);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--blue);
+      color: var(--white);
+      border: none;
+      padding: 12px 28px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .btn-primary:disabled {
+      background: var(--border);
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      color: var(--dark);
+      border: 1px solid var(--border);
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--dark); }
+
+    /* Status */
+    .status {
+      font-size: 13px;
+      color: var(--blue);
+      margin-top: 12px;
+      display: none;
+    }
+    .status.active { display: block; }
+    .status.warn { color: var(--amber); }
+    .status.error { color: #cc0000; }
+
+    /* Loading */
+    .spinner-inline {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--border);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Results */
+    .results { display: none; }
+    .results.active { display: block; }
+
+    .results-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .results-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .badge-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 12px;
+      padding: 4px 12px;
+      color: var(--med);
+    }
+    .badge.positive {
+      border-color: #bbf7d0;
+      color: var(--green);
+      background: var(--green-light);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .tab {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--light);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: -1px;
+      padding: 8px 16px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .tab.active {
+      border-bottom-color: var(--blue);
+      color: var(--dark);
+    }
+
+    /* Script display */
+    .script-view {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      padding: 20px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 540px;
+      overflow-y: auto;
+      color: var(--dark);
+    }
+
+    /* Changes list */
+    .changes-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--light);
+      margin: 20px 0 10px;
+    }
+    .changes-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .changes-list li {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+      line-height: 1.5;
+      padding: 10px 14px;
+    }
+
+    /* Action row */
+    .action-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .copy-success {
+      font-size: 12px;
+      color: var(--green);
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a class="logo" href="https://studionow.com/" target="_blank" rel="noopener"><img src="https://studionow.com/hs-fs/hubfs/studio-now-2024-theme-assets/logos/studio-now-logo-white.png" alt="StudioNow" height="20"></a>
+    <div class="divider"></div>
+    <div class="subtitle">Script Builder</div>
+    <a href="/" class="nav-link">Script Creator</a>
+  </div>
+
+  <div class="container">
+    <!-- Input panel -->
+    <div class="panel">
+      <h2>Script Refinement Studio</h2>
+      <p class="desc">Paste a script draft and choose a refinement mode. Get a tighter, sharper, review-ready script.</p>
+
+      <div class="field">
+        <label for="project-name">Project Name (optional)</label>
+        <input type="text" id="project-name" placeholder="e.g. SmartLabel :30 Spot">
+      </div>
+
+      <div class="field">
+        <label for="script-input">Script</label>
+        <textarea id="script-input" class="script-input" placeholder="Paste your script here — VO, action lines, scene descriptions, SUPERs..."></textarea>
+      </div>
+
+      <div class="mode-label">Refinement Mode</div>
+      <div class="modes">
+        <button class="mode-btn active" data-mode="tighten">
+          <div class="mode-title">Tighten</div>
+          <div class="mode-desc">Cut 20–30%. Every word earns its place.</div>
+        </button>
+        <button class="mode-btn" data-mode="punch">
+          <div class="mode-title">Punch It Up</div>
+          <div class="mode-desc">Sharper language. Stronger verbs. More cinematic.</div>
+        </button>
+        <button class="mode-btn" data-mode="format">
+          <div class="mode-title">Format & Polish</div>
+          <div class="mode-desc">Three-column table, timecodes, SUPERs, SFX tags.</div>
+        </button>
+        <button class="mode-btn" data-mode="notes">
+          <div class="mode-title">Creative Notes</div>
+          <div class="mode-desc">Inline director annotations without rewriting.</div>
+        </button>
+      </div>
+
+      <button class="toggle-link" id="feedback-toggle">+ Add producer direction</button>
+      <div id="feedback-section" style="display:none">
+        <div class="field">
+          <label for="feedback-input">Additional Direction</label>
+          <textarea id="feedback-input" class="feedback-input" placeholder="e.g. Make this work for a :15 cut-down. Keep the end card. Soften the opening."></textarea>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="stats-row">
+          <span id="word-count">0 words</span>
+          <span id="runtime-est">~:00 estimated</span>
+        </div>
+        <button class="btn-primary" id="refine-btn" disabled>Refine Script</button>
+      </div>
+
+      <div class="status" id="status-msg"></div>
+    </div>
+
+    <!-- Results panel -->
+    <div class="panel results" id="results-panel">
+      <div class="results-head">
+        <div class="results-title" id="results-title">Refined Script</div>
+        <div class="badge-row">
+          <span class="badge" id="badge-original"></span>
+          <span class="badge" id="badge-refined"></span>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="refined" id="tab-refined">Refined</button>
+        <button class="tab" data-tab="original" id="tab-original">Original</button>
+        <button class="tab" data-tab="changes" id="tab-changes" style="display:none">Changes</button>
+      </div>
+
+      <div id="view-refined" class="script-view"></div>
+      <div id="view-original" class="script-view" style="display:none"></div>
+      <div id="view-changes" style="display:none">
+        <ul class="changes-list" id="changes-list"></ul>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-primary" id="copy-btn">Copy Refined Script</button>
+        <button class="btn-secondary" id="new-btn">New Refinement</button>
+        <span class="copy-success" id="copy-success">Copied!</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------------------------------------------------------------------------
+    // State
+    // ---------------------------------------------------------------------------
+    let selectedMode = 'tighten';
+    let resultData = null;
+
+    const MODE_LABELS = {
+      tighten: 'Tightened Script',
+      punch: 'Punched-Up Script',
+      format: 'Formatted Script',
+      notes: 'Annotated Script',
+    };
+
+    // ---------------------------------------------------------------------------
+    // DOM refs
+    // ---------------------------------------------------------------------------
+    const scriptInput = document.getElementById('script-input');
+    const projectInput = document.getElementById('project-name');
+    const feedbackInput = document.getElementById('feedback-input');
+    const refineBtn = document.getElementById('refine-btn');
+    const statusMsg = document.getElementById('status-msg');
+    const resultsPanel = document.getElementById('results-panel');
+    const wordCountEl = document.getElementById('word-count');
+    const runtimeEl = document.getElementById('runtime-est');
+
+    // ---------------------------------------------------------------------------
+    // Helpers
+    // ---------------------------------------------------------------------------
+    function countWords(text) {
+      return text.trim().split(/\s+/).filter(Boolean).length;
+    }
+
+    function estimateRuntime(words) {
+      const seconds = Math.round((words / 150) * 60);
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return m > 0 ? `${m}:${String(s).padStart(2, '0')}` : `:${String(s).padStart(2, '0')}`;
+    }
+
+    function showStatus(text, type) {
+      statusMsg.textContent = text;
+      statusMsg.className = 'status active' + (type ? ' ' + type : '');
+    }
+
+    function hideStatus() {
+      statusMsg.className = 'status';
+    }
+
+    // ---------------------------------------------------------------------------
+    // Live stats
+    // ---------------------------------------------------------------------------
+    scriptInput.addEventListener('input', () => {
+      const words = countWords(scriptInput.value);
+      wordCountEl.textContent = `${words} words`;
+      runtimeEl.textContent = `~${estimateRuntime(words)} estimated`;
+      refineBtn.disabled = scriptInput.value.trim().length < 40;
+    });
+
+    // ---------------------------------------------------------------------------
+    // Mode selection
+    // ---------------------------------------------------------------------------
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedMode = btn.dataset.mode;
+      });
+    });
+
+    // ---------------------------------------------------------------------------
+    // Feedback toggle
+    // ---------------------------------------------------------------------------
+    const feedbackToggle = document.getElementById('feedback-toggle');
+    const feedbackSection = document.getElementById('feedback-section');
+    feedbackToggle.addEventListener('click', () => {
+      const visible = feedbackSection.style.display !== 'none';
+      feedbackSection.style.display = visible ? 'none' : 'block';
+      feedbackToggle.textContent = visible ? '+ Add producer direction' : '– Hide producer direction';
+    });
+
+    // ---------------------------------------------------------------------------
+    // Tab switching
+    // ---------------------------------------------------------------------------
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const target = tab.dataset.tab;
+        document.getElementById('view-refined').style.display = target === 'refined' ? '' : 'none';
+        document.getElementById('view-original').style.display = target === 'original' ? '' : 'none';
+        document.getElementById('view-changes').style.display = target === 'changes' ? '' : 'none';
+      });
+    });
+
+    // ---------------------------------------------------------------------------
+    // Copy
+    // ---------------------------------------------------------------------------
+    document.getElementById('copy-btn').addEventListener('click', async () => {
+      if (!resultData?.refined) return;
+      try {
+        await navigator.clipboard.writeText(resultData.refined);
+      } catch {
+        const el = document.createElement('textarea');
+        el.value = resultData.refined;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+      }
+      const msg = document.getElementById('copy-success');
+      msg.style.display = 'inline';
+      setTimeout(() => { msg.style.display = 'none'; }, 2200);
+    });
+
+    // ---------------------------------------------------------------------------
+    // New refinement
+    // ---------------------------------------------------------------------------
+    document.getElementById('new-btn').addEventListener('click', () => {
+      resultsPanel.classList.remove('active');
+      resultData = null;
+      hideStatus();
+      // Reset tabs
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-refined').classList.add('active');
+      document.getElementById('view-refined').style.display = '';
+      document.getElementById('view-original').style.display = 'none';
+      document.getElementById('view-changes').style.display = 'none';
+    });
+
+    // ---------------------------------------------------------------------------
+    // Refine
+    // ---------------------------------------------------------------------------
+    refineBtn.addEventListener('click', async () => {
+      const script = scriptInput.value.trim();
+      if (script.length < 40) return;
+
+      refineBtn.disabled = true;
+      refineBtn.innerHTML = '<span class="spinner-inline"></span> Refining...';
+      resultsPanel.classList.remove('active');
+      resultData = null;
+      showStatus(`Running ${selectedMode === 'punch' ? 'Punch It Up' : selectedMode.charAt(0).toUpperCase() + selectedMode.slice(1)} pass...`);
+
+      try {
+        const response = await fetch('/api/refine', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            script,
+            mode: selectedMode,
+            customFeedback: feedbackInput.value,
+            projectName: projectInput.value,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok && !data.refined) {
+          throw new Error(data.error || `Request failed (${response.status})`);
+        }
+
+        resultData = { ...data, mode: selectedMode };
+
+        if (data.fallback) {
+          showStatus('Refinement encountered an issue — showing original script. Try again.', 'warn');
+        } else {
+          hideStatus();
+        }
+
+        // Populate results
+        const projectName = projectInput.value.trim();
+        document.getElementById('results-title').textContent =
+          (projectName ? projectName + ' — ' : '') + MODE_LABELS[selectedMode];
+
+        document.getElementById('badge-original').textContent =
+          `Original: ${data.stats.originalWords} words · ~${data.stats.originalRuntime}`;
+
+        const delta = data.stats.refinedWords - data.stats.originalWords;
+        const deltaStr = delta !== 0 ? ` (${delta > 0 ? '+' : ''}${delta})` : '';
+        const refinedBadge = document.getElementById('badge-refined');
+        refinedBadge.textContent =
+          `Refined: ${data.stats.refinedWords} words · ~${data.stats.refinedRuntime}${deltaStr}`;
+        refinedBadge.className = delta < 0 ? 'badge positive' : 'badge';
+
+        document.getElementById('view-refined').textContent = data.refined;
+        document.getElementById('view-original').textContent = script;
+
+        // Tab label
+        document.getElementById('tab-refined').textContent = MODE_LABELS[selectedMode];
+
+        // Changes
+        const changesTab = document.getElementById('tab-changes');
+        const changesList = document.getElementById('changes-list');
+        changesList.innerHTML = '';
+        if (data.changes && data.changes.length > 0) {
+          changesTab.textContent = `Changes (${data.changes.length})`;
+          changesTab.style.display = '';
+          data.changes.forEach(c => {
+            const li = document.createElement('li');
+            li.textContent = c;
+            changesList.appendChild(li);
+          });
+        } else {
+          changesTab.style.display = 'none';
+        }
+
+        // Reset to refined tab
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-refined').classList.add('active');
+        document.getElementById('view-refined').style.display = '';
+        document.getElementById('view-original').style.display = 'none';
+        document.getElementById('view-changes').style.display = 'none';
+
+        resultsPanel.classList.add('active');
+        resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      } catch (err) {
+        showStatus(err.message, 'error');
+      } finally {
+        refineBtn.disabled = scriptInput.value.trim().length < 40;
+        refineBtn.textContent = 'Refine Script';
+      }
+    });
+  </script>
+</body>
+</html>

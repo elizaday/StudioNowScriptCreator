@@ -1,0 +1,14 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+  command = "node build-prompt.mjs"
+
+[dev]
+  publish = "public"
+  functions = "netlify/functions"
+  framework = "#static"
+  port = 8888
+
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["full-prompt.md"]

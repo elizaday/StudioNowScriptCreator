@@ -1,0 +1,17 @@
+{
+  "name": "studionow-script-creator",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "build-prompt": "node build-prompt.mjs",
+    "build": "node build-prompt.mjs",
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@netlify/blobs": "^10.7.4",
+    "dotenv": "^17.3.1",
+    "jszip": "^3.10.1",
+    "mammoth": "^1.8.0"
+  }
+}

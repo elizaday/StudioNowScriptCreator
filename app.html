@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudioNow Script Creator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --dark: #191919;
+      --med: #555;
+      --light: #888;
+      --border: #e0e0e0;
+      --bg: #f5f5f5;
+      --white: #fff;
+      --accent: #0075FF;
+      --accent-dark: #0060d4;
+      --red: #cc0000;
+      --green: #2a7d3f;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    /* Header */
+    .header {
+      background: var(--dark);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header h1 {
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .header .pipe {
+      color: rgba(255,255,255,0.2);
+      font-size: 15px;
+    }
+    .header .subtitle {
+      color: rgba(255,255,255,0.45);
+      font-size: 13px;
+      font-weight: 400;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+    }
+    .status-dot.connected { background: var(--green); }
+    .status-text {
+      color: rgba(255,255,255,0.5);
+      font-size: 12px;
+    }
+    .settings-btn {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: rgba(255,255,255,0.6);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .settings-btn:hover {
+      background: rgba(255,255,255,0.18);
+      color: #fff;
+    }
+
+    /* Settings panel */
+    .settings-panel {
+      display: none;
+      background: #222;
+      padding: 16px 32px;
+      border-bottom: 1px solid #333;
+    }
+    .settings-panel.open { display: flex; align-items: center; gap: 12px; }
+    .settings-panel label {
+      color: rgba(255,255,255,0.5);
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .settings-panel input {
+      flex: 1;
+      max-width: 500px;
+      padding: 8px 12px;
+      background: #333;
+      border: 1px solid #444;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 13px;
+      font-family: monospace;
+    }
+    .settings-panel input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .ref-count {
+      color: rgba(255,255,255,0.4);
+      font-size: 11px;
+      margin-left: auto;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* Card */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .card-desc {
+      font-size: 13px;
+      color: var(--light);
+      margin-bottom: 20px;
+    }
+
+    /* Form elements */
+    label.field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--med);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-family: inherit;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--dark);
+      resize: vertical;
+      min-height: 200px;
+      line-height: 1.6;
+      transition: border-color 0.15s;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    textarea::placeholder {
+      color: #bbb;
+    }
+
+    /* Upload */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 6px;
+      padding: 18px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: var(--bg);
+      margin-top: 16px;
+    }
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--accent);
+      background: #eef5ff;
+    }
+    .upload-prompt {
+      color: var(--med);
+      font-size: 13px;
+    }
+    .upload-prompt strong { color: var(--accent); }
+    .upload-hint {
+      font-size: 11px;
+      color: var(--light);
+      margin-top: 2px;
+    }
+    .file-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .file-list:empty { display: none; }
+    .file-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+    }
+    .file-chip .tag {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 5px;
+      border-radius: 3px;
+      color: #fff;
+    }
+    .tag.pdf { background: #d44; }
+    .tag.doc { background: #2b5797; }
+    .tag.ppt { background: #d24726; }
+    .tag.img { background: #5a9e6f; }
+    .tag.txt { background: #888; }
+    .file-chip .remove {
+      cursor: pointer;
+      color: var(--light);
+      font-size: 14px;
+      line-height: 1;
+    }
+    .file-chip .remove:hover { color: var(--red); }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 20px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--accent-dark); }
+    .btn-primary:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      background: var(--white);
+      color: var(--dark);
+      border: 1px solid var(--border);
+      padding: 9px 18px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .btn-secondary:hover { border-color: var(--dark); }
+    .btn-secondary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Loading */
+    .loading-bar {
+      display: none;
+      height: 3px;
+      background: var(--bg);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .loading-bar.active { display: block; }
+    .loading-bar .fill {
+      height: 100%;
+      width: 30%;
+      background: var(--accent);
+      border-radius: 2px;
+      animation: loading 1.2s ease-in-out infinite;
+    }
+    @keyframes loading {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(400%); }
+    }
+
+    /* Output */
+    .output-area {
+      display: none;
+    }
+    .output-area.visible { display: block; }
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .output-stats {
+      font-size: 12px;
+      color: var(--light);
+      display: flex;
+      gap: 16px;
+    }
+    .output-content {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 24px;
+      font-size: 14px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: 'Inter', sans-serif;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    /* Refine panel */
+    .refine-panel {
+      display: none;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .refine-panel.visible { display: block; }
+    .refine-modes {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .refine-modes .btn-secondary.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: #eef5ff;
+    }
+    .refine-feedback {
+      width: 100%;
+      min-height: 60px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-family: inherit;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      resize: vertical;
+      margin-bottom: 12px;
+    }
+    .refine-feedback:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--dark);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 13px;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.25s;
+      z-index: 100;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      .container { padding: 16px; }
+      .card { padding: 20px; }
+      .header { padding: 12px 16px; }
+      .settings-panel { padding: 12px 16px; flex-wrap: wrap; }
+      .btn-row { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <h1>StudioNow</h1>
+    <span class="pipe">|</span>
+    <span class="subtitle">Script Creator</span>
+  </div>
+  <div class="header-right">
+    <span class="status-dot" id="statusDot"></span>
+    <span class="status-text" id="statusText">Checking...</span>
+    <button class="settings-btn" id="settingsToggle">Settings</button>
+  </div>
+</div>
+
+<!-- Settings -->
+<div class="settings-panel" id="settingsPanel">
+  <label for="apiKeyInput">API Key</label>
+  <input type="password" id="apiKeyInput" placeholder="sk-ant-..." autocomplete="off">
+  <span class="ref-count" id="refCount"></span>
+</div>
+
+<div class="container">
+
+  <!-- Brief Input -->
+  <div class="card">
+    <div class="card-title">Brief</div>
+    <div class="card-desc">Paste the full brief, or describe what you need. Attach reference files below.</div>
+    <textarea id="briefInput" placeholder="Example: Write a 90-second sizzle reel for the Coca-Cola Zero Sugar 3.0 launch. Audience is internal brand leadership. The story should show the evolution from 2.0 to 3.0, emphasizing the reformulation and consumer response data. Tone should be Confident/Corporate with moments of energy. We have existing footage from the 2.0 campaign..."></textarea>
+
+    <!-- File upload -->
+    <div class="upload-zone" id="uploadZone">
+      <div class="upload-prompt">
+        <strong>Drop files here</strong> or click to browse
+      </div>
+      <div class="upload-hint">Images, PDFs, PPTX, DOCX, TXT</div>
+    </div>
+    <input type="file" id="fileInput" multiple accept="image/*,.pdf,.pptx,.ppt,.docx,.doc,.txt" style="display:none">
+    <div class="file-list" id="fileList"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="generateBtn">Generate Script</button>
+      <button class="btn btn-secondary" id="clearBtn" style="display:none">Clear</button>
+    </div>
+  </div>
+
+  <!-- Output -->
+  <div class="output-area" id="outputArea">
+    <div class="card">
+      <div class="output-header">
+        <div class="card-title">Script</div>
+        <div class="output-stats" id="outputStats"></div>
+      </div>
+      <div class="loading-bar" id="loadingBar"><div class="fill"></div></div>
+      <div class="output-content" id="outputContent"></div>
+      <div class="btn-row" id="outputActions" style="display:none">
+        <button class="btn btn-secondary" id="copyBtn">Copy</button>
+        <button class="btn btn-secondary" id="copyHtmlBtn">Copy as HTML</button>
+        <button class="btn btn-secondary" id="refineToggle">Refine</button>
+      </div>
+
+      <!-- Refine panel -->
+      <div class="refine-panel" id="refinePanel">
+        <div class="card-desc" style="margin-bottom:10px">Choose a refinement mode, add optional direction, then run it.</div>
+        <div class="refine-modes" id="refineModes">
+          <button class="btn btn-secondary" data-mode="tighten">Tighten (cut 20-30%)</button>
+          <button class="btn btn-secondary" data-mode="punch">Punch Up</button>
+          <button class="btn btn-secondary" data-mode="format">Format Check</button>
+          <button class="btn btn-secondary" data-mode="notes">CD Notes</button>
+        </div>
+        <textarea class="refine-feedback" id="refineFeedback" placeholder="Optional: add specific direction for the refinement..."></textarea>
+        <button class="btn btn-primary" id="refineBtn" disabled>Run Refinement</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// =========================================================================
+// State
+// =========================================================================
+let attachments = [];
+let currentScript = "";
+let selectedRefineMode = "";
+let isGenerating = false;
+
+// =========================================================================
+// Elements
+// =========================================================================
+const $ = (id) => document.getElementById(id);
+const briefInput = $("briefInput");
+const generateBtn = $("generateBtn");
+const clearBtn = $("clearBtn");
+const outputArea = $("outputArea");
+const outputContent = $("outputContent");
+const outputStats = $("outputStats");
+const outputActions = $("outputActions");
+const loadingBar = $("loadingBar");
+const uploadZone = $("uploadZone");
+const fileInput = $("fileInput");
+const fileList = $("fileList");
+const apiKeyInput = $("apiKeyInput");
+const settingsToggle = $("settingsToggle");
+const settingsPanel = $("settingsPanel");
+const statusDot = $("statusDot");
+const statusText = $("statusText");
+const refCount = $("refCount");
+const refinePanel = $("refinePanel");
+const refineModes = $("refineModes");
+const refineFeedback = $("refineFeedback");
+const refineBtn = $("refineBtn");
+const toast = $("toast");
+
+// =========================================================================
+// Settings
+// =========================================================================
+settingsToggle.addEventListener("click", () => {
+  settingsPanel.classList.toggle("open");
+});
+
+// Persist API key in sessionStorage (clears when browser tab closes)
+apiKeyInput.value = sessionStorage.getItem("sn_api_key") || "";
+apiKeyInput.addEventListener("input", () => {
+  sessionStorage.setItem("sn_api_key", apiKeyInput.value.trim());
+  checkStatus();
+});
+
+// =========================================================================
+// Status check
+// =========================================================================
+async function checkStatus() {
+  try {
+    const res = await fetch("/api/status");
+    const data = await res.json();
+    const hasKey = data.hasApiKey || apiKeyInput.value.trim().length > 10;
+    statusDot.className = "status-dot" + (hasKey ? " connected" : "");
+    statusText.textContent = hasKey
+      ? `${data.references.length} refs loaded (${data.promptSize})`
+      : "No API key";
+    refCount.textContent = `${data.references.length} reference files loaded | ${data.promptWords.toLocaleString()} words | ${data.promptSize}`;
+  } catch {
+    statusDot.className = "status-dot";
+    statusText.textContent = "Server offline";
+  }
+}
+checkStatus();
+
+// =========================================================================
+// File upload
+// =========================================================================
+uploadZone.addEventListener("click", () => fileInput.click());
+uploadZone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  uploadZone.classList.add("dragover");
+});
+uploadZone.addEventListener("dragleave", () => uploadZone.classList.remove("dragover"));
+uploadZone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  uploadZone.classList.remove("dragover");
+  handleFiles(e.dataTransfer.files);
+});
+fileInput.addEventListener("change", () => {
+  handleFiles(fileInput.files);
+  fileInput.value = "";
+});
+
+function handleFiles(files) {
+  for (const file of files) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result.split(",")[1];
+      attachments.push({
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        data: base64,
+      });
+      renderFileList();
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function renderFileList() {
+  fileList.innerHTML = attachments
+    .map((f, i) => {
+      const ext = f.name.split(".").pop().toLowerCase();
+      let tagClass = "txt";
+      if (ext === "pdf") tagClass = "pdf";
+      else if (["doc", "docx"].includes(ext)) tagClass = "doc";
+      else if (["ppt", "pptx"].includes(ext)) tagClass = "ppt";
+      else if (["png", "jpg", "jpeg", "gif", "webp"].includes(ext)) tagClass = "img";
+      const size = f.size > 1024 * 1024
+        ? (f.size / (1024 * 1024)).toFixed(1) + "MB"
+        : Math.round(f.size / 1024) + "KB";
+      return `<div class="file-chip">
+        <span class="tag ${tagClass}">${ext}</span>
+        <span>${f.name}</span>
+        <span style="color:var(--light);font-size:11px">${size}</span>
+        <span class="remove" onclick="removeFile(${i})">x</span>
+      </div>`;
+    })
+    .join("");
+}
+
+window.removeFile = function (i) {
+  attachments.splice(i, 1);
+  renderFileList();
+};
+
+// =========================================================================
+// Generate
+// =========================================================================
+generateBtn.addEventListener("click", generate);
+
+async function generate() {
+  const brief = briefInput.value.trim();
+  if (!brief) {
+    showToast("Enter a brief first.");
+    return;
+  }
+
+  isGenerating = true;
+  generateBtn.disabled = true;
+  generateBtn.textContent = "Generating...";
+  clearBtn.style.display = "none";
+  outputArea.classList.add("visible");
+  outputContent.textContent = "";
+  outputStats.textContent = "";
+  outputActions.style.display = "none";
+  refinePanel.classList.remove("visible");
+  loadingBar.classList.add("active");
+  currentScript = "";
+
+  const apiKey = apiKeyInput.value.trim();
+
+  try {
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        brief,
+        attachments,
+        apiKey: apiKey || undefined,
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || "Generation failed");
+    }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        if (!line.startsWith("data: ")) continue;
+        try {
+          const data = JSON.parse(line.slice(6));
+          if (data.text) {
+            currentScript += data.text;
+            outputContent.textContent = currentScript;
+            outputContent.scrollTop = outputContent.scrollHeight;
+          }
+          if (data.error) {
+            throw new Error(data.error);
+          }
+        } catch (e) {
+          if (e.message && !e.message.includes("JSON")) throw e;
+        }
+      }
+    }
+
+    // Done
+    loadingBar.classList.remove("active");
+    outputActions.style.display = "flex";
+    clearBtn.style.display = "inline-flex";
+    updateStats();
+  } catch (err) {
+    loadingBar.classList.remove("active");
+    if (!currentScript) {
+      outputContent.textContent = "Error: " + err.message;
+    } else {
+      showToast("Error: " + err.message);
+    }
+  } finally {
+    isGenerating = false;
+    generateBtn.disabled = false;
+    generateBtn.textContent = "Generate Script";
+  }
+}
+
+function updateStats() {
+  const words = currentScript.trim().split(/\s+/).filter(Boolean).length;
+  const voWords = extractVoWords(currentScript);
+  const runtime = estimateRuntime(voWords);
+  outputStats.innerHTML = `<span>${words.toLocaleString()} total words</span><span>${voWords} VO words</span><span>~${runtime} estimated</span>`;
+}
+
+function extractVoWords(text) {
+  // Rough extraction: lines in AUDIO/VO column tend to be before the | separator
+  // For now, estimate VO as ~60% of total words (non-visual, non-super content)
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  return Math.round(words * 0.45);
+}
+
+function estimateRuntime(voWords) {
+  const seconds = Math.round((voWords / 2.5));
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return m > 0 ? `${m}:${String(s).padStart(2, "0")}` : `:${String(s).padStart(2, "0")}`;
+}
+
+// =========================================================================
+// Copy
+// =========================================================================
+$("copyBtn").addEventListener("click", () => {
+  navigator.clipboard.writeText(currentScript).then(() => showToast("Copied to clipboard."));
+});
+
+$("copyHtmlBtn").addEventListener("click", () => {
+  // Convert markdown-ish table to basic HTML
+  const html = currentScript
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.*?)\*/g, "<em>$1</em>")
+    .replace(/^### (.*$)/gm, "<h3>$1</h3>")
+    .replace(/^## (.*$)/gm, "<h2>$1</h2>")
+    .replace(/^# (.*$)/gm, "<h1>$1</h1>");
+  navigator.clipboard.writeText(html).then(() => showToast("Copied as HTML."));
+});
+
+// =========================================================================
+// Clear
+// =========================================================================
+clearBtn.addEventListener("click", () => {
+  outputArea.classList.remove("visible");
+  clearBtn.style.display = "none";
+  currentScript = "";
+  outputContent.textContent = "";
+  refinePanel.classList.remove("visible");
+});
+
+// =========================================================================
+// Refine
+// =========================================================================
+$("refineToggle").addEventListener("click", () => {
+  refinePanel.classList.toggle("visible");
+});
+
+refineModes.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-mode]");
+  if (!btn) return;
+  refineModes.querySelectorAll(".btn-secondary").forEach((b) => b.classList.remove("active"));
+  btn.classList.add("active");
+  selectedRefineMode = btn.dataset.mode;
+  refineBtn.disabled = false;
+});
+
+refineBtn.addEventListener("click", refineScript);
+
+async function refineScript() {
+  if (!selectedRefineMode || !currentScript) return;
+
+  refineBtn.disabled = true;
+  refineBtn.textContent = "Refining...";
+  loadingBar.classList.add("active");
+
+  const apiKey = apiKeyInput.value.trim();
+  let refined = "";
+
+  try {
+    const res = await fetch("/api/refine", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        script: currentScript,
+        mode: selectedRefineMode,
+        customFeedback: refineFeedback.value.trim(),
+        apiKey: apiKey || undefined,
+      }),
+    });
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    // Clear output and stream refined version
+    outputContent.textContent = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        if (!line.startsWith("data: ")) continue;
+        try {
+          const data = JSON.parse(line.slice(6));
+          if (data.text) {
+            refined += data.text;
+            outputContent.textContent = refined;
+            outputContent.scrollTop = outputContent.scrollHeight;
+          }
+        } catch { /* skip */ }
+      }
+    }
+
+    // Parse the refined output
+    const refinedMatch = refined.match(/---REFINED---\s*([\s\S]*?)\s*---CHANGES---/);
+    const changesMatch = refined.match(/---CHANGES---\s*([\s\S]*?)\s*---END---/);
+
+    if (refinedMatch) {
+      currentScript = refinedMatch[1].trim();
+      outputContent.textContent = currentScript;
+
+      if (changesMatch) {
+        const changes = changesMatch[1].trim();
+        showToast("Refined. Changes: " + changes.split("\n").length + " items.");
+      }
+    } else {
+      currentScript = refined;
+      outputContent.textContent = currentScript;
+    }
+
+    updateStats();
+  } catch (err) {
+    showToast("Refine error: " + err.message);
+  } finally {
+    loadingBar.classList.remove("active");
+    refineBtn.disabled = false;
+    refineBtn.textContent = "Run Refinement";
+  }
+}
+
+// =========================================================================
+// Toast
+// =========================================================================
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3000);
+}
+
+// =========================================================================
+// Keyboard shortcut
+// =========================================================================
+document.addEventListener("keydown", (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === "Enter" && !isGenerating) {
+    e.preventDefault();
+    generate();
+  }
+});
+</script>
+
+</body>
+</html>
