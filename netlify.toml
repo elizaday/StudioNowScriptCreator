@@ -1,0 +1,9 @@
+[build]
+  base = "studionow-web"
+  publish = "public"
+  command = "npm install && node build-prompt.mjs"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["full-prompt.md"]
