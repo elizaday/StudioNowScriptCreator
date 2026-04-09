@@ -10,16 +10,17 @@ import JSZip from "jszip";
 // ---------------------------------------------------------------------------
 const _fnDir = dirname(fileURLToPath(import.meta.url));
 
-// Load the pre-built full prompt (CLAUDE.md + all 15 reference files)
+// Load the pre-built full prompt (CLAUDE.md + all 15 reference files).
+// Netlify's `included_files` places the file relative to the function bundle,
+// so we try several candidate locations to survive any bundler layout change.
 let SYSTEM_PROMPT = "";
-const promptPath = resolve(process.cwd(), "studionow-web", "full-prompt.md");
-
-try {
-  SYSTEM_PROMPT = readFileSync(promptPath, "utf-8");
-  console.log(`Full prompt loaded from ${promptPath}`);
-} catch (err) {
-  console.error("CRITICAL ERROR: Could not load full-prompt.md. Path tried:", promptPath);
-}
+const promptPaths = [
+  resolve(_fnDir, "../../full-prompt.md"),                            // /var/task/full-prompt.md
+  resolve(_fnDir, "../full-prompt.md"),                               // /var/task/netlify/full-prompt.md
+  resolve(_fnDir, "full-prompt.md"),                                  // /var/task/netlify/functions/full-prompt.md
+  resolve(process.cwd(), "full-prompt.md"),                           // cwd
+  resolve(process.cwd(), "studionow-web", "full-prompt.md"),          // repo-root cwd fallback
+];
 
 for (const p of promptPaths) {
   try {
@@ -29,7 +30,7 @@ for (const p of promptPaths) {
   } catch { /* try next */ }
 }
 if (!SYSTEM_PROMPT) {
-  console.error("WARNING: Could not load full-prompt.md from any path. Tried:", promptPaths);
+  console.error("CRITICAL: Could not load full-prompt.md from any of:", promptPaths);
 }
 
 // ---------------------------------------------------------------------------
