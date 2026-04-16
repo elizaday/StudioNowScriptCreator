@@ -6,14 +6,14 @@ No producer notes. No asset sourcing. No approval flags. Those live in the Produ
 
 ## Separation from producer notes
 
-The client script and producer notes are TWO SEPARATE DOCUMENTS. Always output them with a clear separator between them:
+The client script and producer notes are separate deliverables. In the response, output them as two clearly separated sections:
 
 1. Output the complete client script first
 2. Then output a markdown horizontal rule: `---`
 3. Then output `## Producer Notes` or `## PRODUCER NOTES` as a heading
 4. Then output the complete producer notes
 
-This separator allows the UI to split them into separate downloadable documents. Never combine them into one document.
+This separator allows downstream splitting. Do not blend producer-note language into the client script.
 
 ## Metadata header
 
@@ -47,6 +47,9 @@ Use this structure:
 - AUDIO / VO: voiceover lines, SFX cues, music direction notes
 - TC: timecode or scene/chapter labels
 - VISUALS: what the audience sees, written in present tense with motion
+
+Every row must earn its place.
+If a row does not introduce tension, progression, proof, or payoff, cut it.
 
 ## Timecode conventions by format
 
@@ -121,3 +124,13 @@ You may recommend:
 - Teaser + explainer companion piece
 
 Do this when the brief is overloaded and one asset cannot solve the job cleanly. Name the recommendation and say why.
+
+
+## Final validation before output
+
+- Timecodes add up exactly to the target runtime
+- No duplicate [Asset N] references
+- No producer bleed into visuals
+- No overwritten SUPERs
+- Opening has tension
+- Ending resolves, not just stops

@@ -138,6 +138,24 @@ Land the result. Show the world after the change. Resolve the tension from Act 1
 - The closing line earns the end feeling.
 - Typical allocation: 15-25% of runtime.
 
+
+## Fast arc for :30 spots
+
+- :00-:08 Problem / tension
+- :08-:22 Change / proof / escalation
+- :22-:30 Outcome / brand landing
+
+If a :30 spot has four ideas, it has too many.
+
+## Two useful shortcuts
+
+### Product spot arc
+Need -> sharper want -> product proof -> appetite payoff
+
+### Explainer arc
+Pain -> tool -> how it works -> better future state
+
+
 ## Arc behavior by script type
 
 ### Standard Sizzle

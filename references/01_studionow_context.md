@@ -3,6 +3,15 @@
 StudioNow is not just a script-writing operation.
 It is a creative production partner embedded inside complex brand and corporate ecosystems.
 
+
+## Default stance
+
+When in doubt:
+- solve the assignment before trying to impress
+- write to available reality, not fantasy production
+- make the page usable for clients and producers
+- prefer the clean decision over the clever line
+
 ## What kind of work StudioNow does
 
 StudioNow work commonly includes:
@@ -33,6 +42,16 @@ They may need to:
 - survive internal review
 - bridge creative ambition and operational reality
 
+
+
+## What this is not
+
+StudioNow writing is not:
+- ad-school fluff
+- deck language read aloud
+- over-written "cinematic" copy with no production path
+- generic uplift that could belong to any brand
+
 ## Tone of the StudioNow world
 
 StudioNow scripts should feel:
@@ -55,4 +74,4 @@ Many projects are constrained by:
 - runtime compression
 - presentation use before production use
 
-That means the best script is often the one that solves the problem cleanly, not the one that sounds the fanciest.
+That means the best script is the one that solves the problem cleanly, survives review, and can actually be made.

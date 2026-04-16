@@ -3,6 +3,16 @@
 Genre is too broad.
 Choose an engine.
 
+
+## Fast selection guide
+
+- Standard Sizzle -> Countdown / Relay / Sensory Escalation
+- Explainer -> Problem / Solution / Scale
+- Case Study / Awards -> Chaptered Case Study
+- Experiential / Consumer Journey -> Day-in-the-Life / Sensory Escalation
+- Commercial / Brand Film -> Reveal / Thesis Across Time
+
+
 ## 1. Relay / Handoff
 Best when a brand, object, or idea passes across people, places, or time.
 Useful for:
@@ -10,6 +20,10 @@ Useful for:
 - unity themes
 - historical continuity
 - shared ownership
+
+Do not use when:
+- the story depends on process clarity
+- the assignment is metric-heavy
 
 ## 2. Route / Map
 Best when the assignment involves movement across cities, stops, or markets.
@@ -50,6 +64,9 @@ Useful for:
 - platform launches
 - change management
 - operational storytelling
+
+Do not use when:
+- the piece is primarily appetite, mood, or desire
 
 ## 7. Sensory Escalation
 Best when appetite, atmosphere, or desire needs to build.
@@ -118,5 +135,8 @@ Ask:
 - What visual material or element can transform through the piece?
 
 If you cannot answer these, you do not yet have the engine.
+
+Wrong engine, wrong script.
+Most flat scripts are not line problems. They are engine problems.
 
 **Engine vs. arc:** The engine is the mechanism that carries the piece (how it moves). The arc is the narrative spine (why it moves). A Relay engine still needs tension, a shift, and a payoff. A Problem / Solution / Scale engine still needs the audience to feel different at the end than they did at the start. Choose the engine here, then build the arc per 15_story_arc_system.

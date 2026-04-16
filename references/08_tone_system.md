@@ -12,6 +12,30 @@ An internal video can be Energetic. An external video can be Confident. Do not c
 2. The tone sets parameters for writing, visuals, music, and pacing.
 3. Every section of the script must hold the selected tone. Drift is a failure (see 12_gotchas).
 
+
+## Common tone confusions
+
+- **Product-Led vs Brand-Led**  
+  Product-Led sells the thing.  
+  Brand-Led sells the belief.
+
+- **Commercial / Cinematic vs Emotion-Driven**  
+  Commercial privileges image and restraint.  
+  Emotion-Driven privileges human feeling and behavior.
+
+- **Confident / Corporate vs Direct / Informational**  
+  Confident argues.  
+  Direct instructs.
+
+## Tone stacking is not allowed
+
+Do not write:
+"Start cinematic, go energetic, end inspirational."
+
+Pick one governing tone.
+Variation inside the tone is fine. Switching tonal systems is not.
+
+
 ## Tone options
 
 ### Tech-Forward

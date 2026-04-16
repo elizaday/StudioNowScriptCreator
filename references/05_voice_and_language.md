@@ -65,10 +65,30 @@ Avoid lines like:
 - create awareness and excitement
 - where magic happens
 - this is more than
-- not just X, but Y
+- default avoid: not just X, but Y
 
 These are weak because they are portable.
 Portable language usually means low specificity.
+
+
+## Speakability test
+
+Read the line out loud.
+If a smart producer would stumble, shorten it.
+If it sounds like a deck headline with verbs added, rewrite it.
+
+## No rhetorical fog
+
+Avoid:
+- empty questions
+- thesisy throat-clearing
+- category statements with no friction
+
+Bad:
+"What does flavor mean today?"
+
+Better:
+"The shelf was crowded. None of it felt worth grabbing."
 
 ## Bad vs better
 
@@ -136,6 +156,16 @@ Good: "We had the data. We had the platform. But every decision still took six w
 If your opening could belong to a hundred other brand films, it has no tension. Find the "but."
 
 **Critical: Override weak brief openings.** When the brief itself suggests an opening line or story flow, do NOT copy it verbatim. Test it against the tension rule first. If the brief says "Opening: People are looking for MORE," that is a prompt to find what "more" actually means, not permission to use a generic statement. Look deeper into the brief or attached materials for the real human contradiction. The deck almost always contains a better opening than the brief's summary suggests. Mine the attachments for the actual tension, then write a sharper version.
+
+
+## Placeholder copy test
+
+Delete any line that can survive unchanged after swapping:
+- client name
+- product name
+- category
+
+If the line still works, it is generic.
 
 ## Write transitions between sections
 

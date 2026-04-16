@@ -17,13 +17,23 @@ Date: [M/D/YY]
 Version: [Matches script version]
 ```
 
+
+## Section 0: Red flags
+
+Call out anything that could break the schedule or budget:
+- missing hero asset
+- approval bottleneck
+- heavy graphics load
+- unrealistic AI generation dependency
+- rights risk
+
 ## Section 1: Asset sourcing matrix
 
 For every visual called out in the script, categorize the source:
 
-| Visual | Source Type | Status | Notes |
-|--------|-----------|--------|-------|
-| [Description] | Existing footage / Stock / To-shoot / AI-generated / Archival / Motion graphics | Available / Needs sourcing / Needs approval / Placeholder | [Specifics] |
+| Script Ref | Visual | Source Type | Status | Priority | Notes |
+|-----------|--------|-------------|--------|----------|-------|
+| [:00-:03 / CH1] | [Description] | Existing footage / Stock / To-shoot / AI-generated / Archival / Motion graphics | Available / Needs sourcing / Needs approval / Placeholder | High / Medium / Low | [Specifics] |
 
 Source type definitions:
 - **Existing footage**: Client already has this. Name the source if known.

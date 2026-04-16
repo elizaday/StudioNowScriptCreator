@@ -36,7 +36,22 @@ The brief text and attached materials should contain these. If they do not, the 
 
 ## The diagnosis process
 
-Run these seven steps silently. The output drives every decision downstream.
+Run these steps silently. The output drives every decision downstream.
+
+
+## Before Step 1: Brief triage
+
+If the brief is thin, missing, or contradictory, do not freeze.
+State the assumption and proceed.
+
+Required fallback assumptions:
+- probable audience
+- probable business objective
+- likely missing assets
+- likely approval risk
+- likely end use
+
+Move forward with stated assumptions. Do not wait for a perfect brief if the probable job is already clear.
 
 ### Step 1: Confirm or adjust the script type
 
@@ -136,6 +151,13 @@ If the brief contains a strategic framework (phases, pillars, tiers), that frame
 
 ### Step 6: Identify the tension, the change, and the landing
 
+Reduce this section to decision statements, not a mini essay:
+- **TENSION:**
+- **CHANGE:**
+- **AUDIENCE STAKE:**
+- **LANDING:**
+
+
 **The tension** (opening): What is the contradiction, gap, or friction the video resolves? This becomes the first 8 seconds. If the brief does not state it, look for it in the business objective or the problem to solve. For the full tension-finding method (stated contradiction, implied gap, competitive pressure, scale of ambition, human friction), see 15_story_arc_system.
 
 **The change**: What is different now? A product launched. A strategy shifted. A capability arrived. A result was achieved. Name the specific thing that breaks the status quo established by the tension. If the brief does not contain a clear change, the video has no story. It is just a topic. Stop and find the change before writing.
@@ -197,6 +219,9 @@ RUNTIME: [Selected duration]
 
 PRIMARY JOB: [What this video actually does]
 SECONDARY JOB: [If applicable]
+ONE-LINE PROBLEM: [The friction in one sentence]
+ONE-LINE STAKE: [Why this audience should care in one sentence]
+ONE-LINE LANDING TEST: [What a correct final beat must do]
 AUDIENCE: [Who, their starting position, and what they need]
 UNDERSTAND: [The one thing they must get]
 FEEL: [Specific end emotion]

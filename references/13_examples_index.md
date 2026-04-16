@@ -17,6 +17,9 @@ Use when:
 - the output is not an explainer
 - AI is part of the method, not the story
 
+Watch for:
+- beautiful abstraction with no assignment clarity
+
 ### B. Modular city / localization scripts
 What to learn:
 - what stays fixed
@@ -96,3 +99,13 @@ Use when:
 Examples are there to teach judgment, not surface mimicry.
 Do not reuse their cadence blindly.
 Take the structural intelligence, not the skin.
+
+
+## Suggested tags
+
+Add tags to each example:
+- OPENING TYPE
+- ENGINE
+- DATA USE
+- SUPER STYLE
+- ENDING TYPE

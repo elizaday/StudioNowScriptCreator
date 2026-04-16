@@ -171,3 +171,34 @@ Named failure patterns the system keeps hitting. Each one has a symptom, a cause
 **Why it happens:** The writer references the same asset in multiple script rows or in both the client script and producer notes. Each [Asset N] tag renders a thumbnail image in the UI.
 
 **Fix:** Each [Asset N] tag should appear at most once in the client script. Choose the single best moment for each asset. In the producer notes, describe assets by their content, not by [Asset N] tag. Not every attached asset needs to be referenced.
+
+---
+
+## 18. Benefit Fog
+
+**Symptom:** The script signals energy, taste, confidence, indulgence, and lifestyle all at once. The audience cannot tell what the product benefit actually is.
+
+**Why it happens:** The writer is trying to honor every claim instead of choosing the lead claim.
+
+**Fix:** Name the primary benefit in one sentence before writing. Every beat either sets it up, proves it, or pays it off.
+
+---
+
+## 19. Shelf-Copy Supers
+
+**Symptom:** SUPERs read like packaging or campaign fragments, not film language.
+
+**Why it happens:** The writer mistakes brand phrases for story beats.
+
+**Fix:** A super must advance the argument, not just restate pack copy.
+
+---
+
+## 20. Asset-Led Writing
+
+**Symptom:** The script feels built around available shots rather than a governing idea.
+
+**Why it happens:** The writer starts with thumbnails instead of tension.
+
+**Fix:** Lock tension, engine, and payoff first. Then assign assets to the structure.
+
