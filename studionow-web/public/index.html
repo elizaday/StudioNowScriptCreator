@@ -497,6 +497,91 @@
     }
     .feedback-status.success { color: #2a9d4e; }
 
+    /* Brief mode toggle */
+    .brief-mode-toggle {
+      display: inline-flex;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .brief-mode-btn {
+      background: var(--bg);
+      border: none;
+      color: var(--med);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 14px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .brief-mode-btn + .brief-mode-btn {
+      border-left: 1px solid var(--border);
+    }
+    .brief-mode-btn.active {
+      background: var(--dark);
+      color: var(--white);
+    }
+
+    /* Brief upload zone — compact version */
+    .brief-upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 6px;
+      padding: 18px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--bg);
+    }
+    .brief-upload-zone:hover,
+    .brief-upload-zone.dragover {
+      border-color: var(--blue);
+      background: #eef6ff;
+    }
+    .brief-file-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: var(--dark);
+      margin-top: 8px;
+      max-width: 100%;
+    }
+    .brief-file-chip .file-icon {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--white);
+      text-transform: uppercase;
+    }
+    .brief-file-chip .file-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+      min-width: 0;
+    }
+    .brief-file-chip .file-remove {
+      cursor: pointer;
+      color: var(--light);
+      font-size: 16px;
+      line-height: 1;
+      flex-shrink: 0;
+      transition: color 0.15s;
+    }
+    .brief-file-chip .file-remove:hover { color: #cc0000; }
+
     /* Quick start examples */
     .examples {
       margin-top: 16px;
@@ -847,7 +932,28 @@
       <div class="form-grid">
         <div class="full-width">
           <label>Brief <span class="required">*</span></label>
-          <textarea id="brief" placeholder="Describe the project. What's the story? Who's the audience? What do we need to communicate? The more detail the better, but even a sentence works."></textarea>
+          <div class="brief-mode-toggle">
+            <button class="brief-mode-btn active" id="briefModeText" onclick="setBriefMode('text')">Type</button>
+            <button class="brief-mode-btn" id="briefModeFile" onclick="setBriefMode('file')">Upload File</button>
+          </div>
+          <div id="briefTextWrap">
+            <textarea id="brief" placeholder="Describe the project. What's the story? Who's the audience? What do we need to communicate? The more detail the better, but even a sentence works."></textarea>
+          </div>
+          <div id="briefFileWrap" style="display:none;">
+            <div class="brief-upload-zone" id="briefUploadZone">
+              <div class="upload-prompt">
+                <div class="upload-icon">+</div>
+                <div>Drop brief file here or <strong>browse</strong></div>
+                <div class="upload-hint">PDF, Word doc, or PowerPoint. One file.</div>
+              </div>
+              <input type="file" id="briefFileInput" accept=".pdf,.doc,.docx,.pptx,.ppt" hidden>
+            </div>
+            <div id="briefFileChip"></div>
+            <div style="margin-top:12px;">
+              <label style="text-transform:none;font-size:13px;color:var(--light);font-weight:400;letter-spacing:0;">Additional context (optional)</label>
+              <textarea id="briefExtra" placeholder="Any additional notes or direction beyond what's in the file..." style="min-height:72px;margin-top:4px;"></textarea>
+            </div>
+          </div>
         </div>
         <div class="full-width">
           <label>Key Message / Tagline (optional)</label>
@@ -995,6 +1101,114 @@
 
     function getAssetById(id) {
       return window.assetLibrary.find(a => a.id === id);
+    }
+
+    // -----------------------------------------------------------------------
+    // Brief mode toggle
+    // -----------------------------------------------------------------------
+    let briefMode = 'text'; // 'text' | 'file'
+    let briefFile = null;   // {name, type, size, data (base64), _extracted, _extractedItems}
+
+    function setBriefMode(mode) {
+      briefMode = mode;
+      document.getElementById('briefModeText').classList.toggle('active', mode === 'text');
+      document.getElementById('briefModeFile').classList.toggle('active', mode === 'file');
+      document.getElementById('briefTextWrap').style.display = mode === 'text' ? '' : 'none';
+      document.getElementById('briefFileWrap').style.display = mode === 'file' ? '' : 'none';
+    }
+
+    // Brief file upload zone wiring
+    const briefUploadZone = document.getElementById('briefUploadZone');
+    const briefFileInput  = document.getElementById('briefFileInput');
+
+    briefUploadZone.addEventListener('click', () => briefFileInput.click());
+    briefUploadZone.addEventListener('dragover', (e) => { e.preventDefault(); briefUploadZone.classList.add('dragover'); });
+    briefUploadZone.addEventListener('dragleave', () => briefUploadZone.classList.remove('dragover'));
+    briefUploadZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      briefUploadZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) handleBriefFile(e.dataTransfer.files[0]);
+    });
+    briefFileInput.addEventListener('change', () => {
+      if (briefFileInput.files.length) handleBriefFile(briefFileInput.files[0]);
+      briefFileInput.value = '';
+    });
+
+    async function handleBriefFile(file) {
+      const BRIEF_TYPES = new Set([
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'application/vnd.ms-powerpoint',
+      ]);
+      if (!BRIEF_TYPES.has(file.type)) {
+        showError('Brief file must be a PDF, Word doc, or PowerPoint.');
+        return;
+      }
+
+      const ext = file.name.split('.').pop().toLowerCase();
+      const chip = document.getElementById('briefFileChip');
+      chip.innerHTML = `<div class="brief-file-chip">
+        <div class="file-icon ${ext === 'pdf' ? 'pdf' : ext.startsWith('doc') ? 'doc' : 'ppt'}" style="background:${ext === 'pdf' ? '#e04040' : ext.startsWith('doc') ? '#2b5797' : '#d24726'};width:18px;height:18px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">${ext.toUpperCase().slice(0,3)}</div>
+        <span class="file-name" title="${file.name}">${file.name}</span>
+        <span style="color:var(--blue);font-size:11px;">Processing...</span>
+        <span class="file-remove" onclick="removeBriefFile()">&times;</span>
+      </div>`;
+
+      try {
+        if (file.type === 'application/pdf') {
+          const { items, pageCount } = await extractPdfClientSide(file);
+          briefFile = {
+            name: file.name,
+            type: file.type,
+            size: items.reduce((s, i) => s + i.size, 0),
+            data: null,
+            _extracted: true,
+            _extractedItems: items,
+            _label: `${pageCount} pages`,
+          };
+        } else if (
+          file.type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation' ||
+          file.type === 'application/vnd.ms-powerpoint'
+        ) {
+          const { items, slideCount } = await extractPptxClientSide(file);
+          briefFile = {
+            name: file.name,
+            type: file.type,
+            size: items.reduce((s, i) => s + i.size, 0),
+            data: null,
+            _extracted: true,
+            _extractedItems: items,
+            _label: `${slideCount} slides`,
+          };
+        } else {
+          // DOCX — read raw
+          const base64 = await new Promise((res, rej) => {
+            const reader = new FileReader();
+            reader.onload = () => res(reader.result.split(',')[1]);
+            reader.onerror = rej;
+            reader.readAsDataURL(file);
+          });
+          briefFile = { name: file.name, type: file.type, size: file.size, data: base64 };
+        }
+
+        const label = briefFile._label ? ` <span style="color:var(--blue);font-size:11px;">(${briefFile._label})</span>` : '';
+        chip.innerHTML = `<div class="brief-file-chip">
+          <div style="width:18px;height:18px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;background:${ext === 'pdf' ? '#e04040' : ext.startsWith('doc') ? '#2b5797' : '#d24726'};flex-shrink:0;">${ext.toUpperCase().slice(0,3)}</div>
+          <span class="file-name" title="${file.name}">${file.name}${label}</span>
+          <span class="file-remove" onclick="removeBriefFile()">&times;</span>
+        </div>`;
+      } catch (err) {
+        briefFile = null;
+        chip.innerHTML = '';
+        showError(`Could not read brief file: ${err.message}`);
+      }
+    }
+
+    function removeBriefFile() {
+      briefFile = null;
+      document.getElementById('briefFileChip').innerHTML = '';
     }
 
     // -----------------------------------------------------------------------
@@ -1586,7 +1800,8 @@
       if (!scriptType) { showError("Please select a Script Type."); return; }
       if (!tone) { showError("Please select a Tone."); return; }
       if (!runtime) { showError("Please select a Runtime."); return; }
-      if (!brief) { showError("Please enter a brief."); return; }
+      if (briefMode === 'text' && !brief) { showError("Please enter a brief."); return; }
+      if (briefMode === 'file' && !briefFile) { showError("Please upload a brief file."); return; }
 
       // Check raw upload size
       const totalBytes = uploadedFiles.reduce((s, f) => s + f.size, 0);
@@ -1610,12 +1825,39 @@
         const n = window.assetLibrary.length;
         fullBrief += `\nVisual Assets: ${n} assets attached, numbered [Asset 1] through [Asset ${n}]. Reference specific assets in the VISUALS column using their [Asset N] tag wherever a visual matches. Example: "[Asset 3] Slow zoom on product hero shot"\n`;
       }
-      fullBrief += `\nBrief:\n${brief}`;
+      if (briefMode === 'file') {
+        fullBrief += `\nBrief: The full project brief is provided in the attached document. Extract all relevant details from it.`;
+        const extra = document.getElementById('briefExtra').value.trim();
+        if (extra) fullBrief += `\n\nAdditional context from producer:\n${extra}`;
+      } else {
+        fullBrief += `\nBrief:\n${brief}`;
+      }
 
       // Build attachments payload — flatten extracted PDFs/PPTXs into individual items
       // Use asset IDs from the global asset library for image names
       const attachments = [];
       let assetIndex = 0;
+
+      // Prepend brief file (if uploaded) so Claude sees it first
+      if (briefMode === 'file' && briefFile) {
+        if (briefFile._extracted && briefFile._extractedItems) {
+          for (const item of briefFile._extractedItems) {
+            attachments.push({
+              name: item.type && item.type.startsWith('image/')
+                ? `Brief document page: ${item.name}`
+                : `Brief document: ${item.name}`,
+              type: item.type,
+              data: item.data,
+            });
+          }
+        } else {
+          attachments.push({
+            name: `Brief document: ${briefFile.name}`,
+            type: briefFile.type,
+            data: briefFile.data,
+          });
+        }
+      }
       for (const f of uploadedFiles) {
         if (f._extracted && f._extractedItems) {
           // Extracted PDF/PPTX: send each extracted item (images + text) individually
