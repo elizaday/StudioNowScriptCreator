@@ -2499,6 +2499,10 @@
     function renderMarkdown(md) {
       let html = md;
 
+      // Normalize tables: collapse blank lines between consecutive table rows
+      // Claude sometimes outputs \n\n between rows which breaks the table regex
+      html = html.replace(/(\|[^\n]+\|)\n\n(?=\|)/g, '$1\n');
+
       // Tables — match header row, separator row, and body rows
       html = html.replace(/^(\|.+\|)\n(\|[-| :]+\|)\n((?:\|.+\|\n?)*)/gm, (match, header, sep, body) => {
         const headerCells = parseTableRow(header);
