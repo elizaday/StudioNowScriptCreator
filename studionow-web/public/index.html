@@ -497,6 +497,60 @@
     }
     .feedback-status.success { color: #2a9d4e; }
 
+    /* Tone chip multi-select */
+    .tone-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tone-chip {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--med);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 5px 14px;
+      transition: all 0.15s;
+    }
+    .tone-chip:hover { border-color: var(--dark); color: var(--dark); }
+    .tone-chip.selected {
+      background: var(--dark);
+      border-color: var(--dark);
+      color: var(--white);
+    }
+    .tone-hint {
+      font-size: 11px;
+      color: var(--light);
+      margin-top: 6px;
+    }
+
+    /* Audio toggle */
+    .audio-toggle {
+      display: flex;
+      gap: 10px;
+    }
+    .audio-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--med);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 9px 20px;
+      transition: all 0.15s;
+    }
+    .audio-btn:hover { border-color: var(--dark); color: var(--dark); }
+    .audio-btn.selected {
+      background: var(--dark);
+      border-color: var(--dark);
+      color: var(--white);
+    }
+
     /* Brief mode toggle */
     .brief-mode-toggle {
       display: inline-flex;
@@ -892,22 +946,6 @@
           </select>
         </div>
         <div>
-          <label>Tone <span class="required">*</span></label>
-          <select id="tone" required>
-            <option value="" disabled selected>Select...</option>
-            <option value="Tech-Forward">Tech-Forward</option>
-            <option value="Emotion-Driven">Emotion-Driven</option>
-            <option value="Product-Led">Product-Led</option>
-            <option value="Brand-Led">Brand-Led</option>
-            <option value="Commercial / Cinematic">Commercial / Cinematic</option>
-            <option value="Human / Documentary">Human / Documentary</option>
-            <option value="Confident / Corporate">Confident / Corporate</option>
-            <option value="Direct / Informational">Direct / Informational</option>
-            <option value="Energetic / Upbeat">Energetic / Upbeat</option>
-            <option value="Inspirational">Inspirational</option>
-          </select>
-        </div>
-        <div>
           <label>Runtime <span class="required">*</span></label>
           <select id="runtime" required onchange="toggleCustomRuntime()">
             <option value="" disabled selected>Select...</option>
@@ -924,6 +962,29 @@
         <div id="customRuntimeWrapper" style="display:none;">
           <label>Custom Runtime</label>
           <input type="text" id="customRuntime" placeholder="e.g. 3:30, 4 minutes">
+        </div>
+        <div class="full-width">
+          <label>Tone <span class="required">*</span></label>
+          <div class="tone-chips" id="toneChips">
+            <button type="button" class="tone-chip" onclick="toggleTone('Tech-Forward')">Tech-Forward</button>
+            <button type="button" class="tone-chip" onclick="toggleTone('Emotion-Driven')">Emotion-Driven</button>
+            <button type="button" class="tone-chip" onclick="toggleTone('Product-Led')">Product-Led</button>
+            <button type="button" class="tone-chip" onclick="toggleTone('Brand-Led')">Brand-Led</button>
+            <button type="button" class="tone-chip" onclick="toggleTone('Commercial / Cinematic')">Commercial / Cinematic</button>
+            <button type="button" class="tone-chip" onclick="toggleTone('Human / Documentary')">Human / Documentary</button>
+            <button type="button" class="tone-chip" onclick="toggleTone('Confident / Corporate')">Confident / Corporate</button>
+            <button type="button" class="tone-chip" onclick="toggleTone('Direct / Informational')">Direct / Informational</button>
+            <button type="button" class="tone-chip" onclick="toggleTone('Energetic / Upbeat')">Energetic / Upbeat</button>
+            <button type="button" class="tone-chip" onclick="toggleTone('Inspirational')">Inspirational</button>
+          </div>
+          <div class="tone-hint" id="toneHint">Select up to 2</div>
+        </div>
+        <div class="full-width">
+          <label>Audio <span class="required">*</span></label>
+          <div class="audio-toggle">
+            <button type="button" class="audio-btn" id="audioVO" onclick="setAudio('Voice Over with Supers')">Voice Over with Supers</button>
+            <button type="button" class="audio-btn" id="audioTOS" onclick="setAudio('Text On Screen')">Text On Screen</button>
+          </div>
         </div>
       </div>
 
@@ -1101,6 +1162,37 @@
 
     function getAssetById(id) {
       return window.assetLibrary.find(a => a.id === id);
+    }
+
+    // -----------------------------------------------------------------------
+    // Tone chip multi-select (max 2)
+    // -----------------------------------------------------------------------
+    let selectedTones = [];
+
+    function toggleTone(tone) {
+      const idx = selectedTones.indexOf(tone);
+      if (idx > -1) {
+        selectedTones.splice(idx, 1);
+      } else {
+        if (selectedTones.length >= 2) return;
+        selectedTones.push(tone);
+      }
+      document.querySelectorAll('.tone-chip').forEach(btn => {
+        btn.classList.toggle('selected', selectedTones.includes(btn.textContent.trim()));
+      });
+      const hint = document.getElementById('toneHint');
+      hint.textContent = selectedTones.length === 2 ? 'Max 2 selected' : 'Select up to 2';
+    }
+
+    // -----------------------------------------------------------------------
+    // Audio toggle
+    // -----------------------------------------------------------------------
+    let selectedAudio = '';
+
+    function setAudio(val) {
+      selectedAudio = val;
+      document.getElementById('audioVO').classList.toggle('selected', val === 'Voice Over with Supers');
+      document.getElementById('audioTOS').classList.toggle('selected', val === 'Text On Screen');
     }
 
     // -----------------------------------------------------------------------
@@ -1283,7 +1375,14 @@
       document.getElementById('client').value = ex.client;
       document.getElementById('audience').value = ex.audience;
       document.getElementById('scriptType').value = ex.scriptType;
-      document.getElementById('tone').value = ex.tone;
+      // Set tone chips
+      selectedTones = [];
+      document.querySelectorAll('.tone-chip').forEach(btn => btn.classList.remove('selected'));
+      if (ex.tone) { toggleTone(ex.tone); }
+      // Clear audio
+      selectedAudio = '';
+      document.getElementById('audioVO').classList.remove('selected');
+      document.getElementById('audioTOS').classList.remove('selected');
       document.getElementById('runtime').value = ex.runtime;
       document.getElementById('tagline').value = ex.tagline;
       document.getElementById('brief').value = ex.brief;
@@ -1788,7 +1887,6 @@
       const version = document.getElementById('version').value.trim();
       const audience = document.getElementById('audience').value;
       const scriptType = document.getElementById('scriptType').value;
-      const tone = document.getElementById('tone').value;
       const runtimeSel = document.getElementById('runtime').value;
       const customRuntime = document.getElementById('customRuntime').value.trim();
       const runtime = runtimeSel === 'Custom' ? customRuntime : runtimeSel;
@@ -1798,7 +1896,8 @@
       // Validate required fields
       if (!audience) { showError("Please select Internal or External."); return; }
       if (!scriptType) { showError("Please select a Script Type."); return; }
-      if (!tone) { showError("Please select a Tone."); return; }
+      if (selectedTones.length === 0) { showError("Please select at least one Tone."); return; }
+      if (!selectedAudio) { showError("Please select an Audio option."); return; }
       if (!runtime) { showError("Please select a Runtime."); return; }
       if (briefMode === 'text' && !brief) { showError("Please enter a brief."); return; }
       if (briefMode === 'file' && !briefFile) { showError("Please upload a brief file."); return; }
@@ -1818,7 +1917,8 @@
       if (version) fullBrief += `Version: ${version}\n`;
       fullBrief += `Internal/External: ${audience}\n`;
       fullBrief += `Script Type: ${scriptType}\n`;
-      fullBrief += `Tone: ${tone}\n`;
+      fullBrief += `Tone: ${selectedTones.join(' + ')}\n`;
+      fullBrief += `Audio: ${selectedAudio}\n`;
       fullBrief += `Runtime: ${runtime}\n`;
       if (tagline) fullBrief += `Key Message / Tagline: ${tagline}\n`;
       if (window.assetLibrary.length > 0) {
@@ -2026,13 +2126,12 @@
       const brief = document.getElementById('brief').value.trim();
       const client = document.getElementById('client').value.trim();
       const scriptType = document.getElementById('scriptType').value;
-      const tone = document.getElementById('tone').value;
 
       const entry = {
         timestamp: new Date().toISOString(),
         client,
         scriptType,
-        tone,
+        tone: selectedTones.join(' + '),
         brief: brief.slice(0, 200), // first 200 chars for context
         feedback,
       };
@@ -2091,7 +2190,7 @@
       const BRAND_LIGHT   = 'FAFAFA';
       const BRAND_BORDER  = 'E4E4E4';
       const BRAND_MUTED   = '888888';
-      const BODY_FONT     = 'Calibri';
+      const BODY_FONT     = 'Unity';
 
       // Helpers
       const base64ToUint8 = (b64) => {
@@ -2115,7 +2214,7 @@
         const process = (child, style) => {
           if (child.nodeType === Node.TEXT_NODE) {
             const text = child.textContent;
-            if (text) runs.push(new TextRun({ text, font: BODY_FONT, size: 21, ...style }));
+            if (text) runs.push(new TextRun({ text, font: BODY_FONT, size: 22, ...style }));
             return;
           }
           if (child.nodeType !== Node.ELEMENT_NODE) return;
@@ -2128,7 +2227,7 @@
           } else if (tag === 'code') {
             child.childNodes.forEach(c => process(c, { ...style, font: 'Consolas' }));
           } else if (tag === 'br') {
-            runs.push(new TextRun({ text: '', break: 1, font: BODY_FONT, size: 21, ...style }));
+            runs.push(new TextRun({ text: '', break: 1, font: BODY_FONT, size: 22, ...style }));
           } else if (tag === 'span' && child.classList && child.classList.contains('asset-ref')) {
             const label = child.querySelector('.asset-label');
             const m = label && label.textContent.match(/Asset (\d+)/);
@@ -2199,7 +2298,7 @@
             const runs = parseInline(td);
             const paragraphs = runs.length
               ? [new Paragraph({ children: runs, spacing: { before: 40, after: 40, line: 280 } })]
-              : [new Paragraph({ children: [new TextRun({ text: '', font: BODY_FONT, size: 21 })] })];
+              : [new Paragraph({ children: [new TextRun({ text: '', font: BODY_FONT, size: 22 })] })];
             return new TableCell({
               shading: isAlt
                 ? { type: ShadingType.CLEAR, color: 'auto', fill: BRAND_LIGHT }
@@ -2317,7 +2416,7 @@
             for (const li of Array.from(child.children)) {
               if (li.tagName.toLowerCase() !== 'li') continue;
               const runs = parseInline(li);
-              runs.unshift(new TextRun({ text: `${n}.  `, bold: true, font: BODY_FONT, size: 21 }));
+              runs.unshift(new TextRun({ text: `${n}.  `, bold: true, font: BODY_FONT, size: 22 }));
               n++;
               docChildren.push(new Paragraph({
                 children: runs,
@@ -2353,7 +2452,7 @@
         description: 'Generated by the StudioNow Script Creator',
         styles: {
           default: {
-            document: { run: { font: BODY_FONT, size: 21 } }
+            document: { run: { font: BODY_FONT, size: 22 } }
           }
         },
         sections: [{
